@@ -15,7 +15,8 @@ public class SalesLog {
                 if (!txnDate.before(from) && !txnDate.after(to)) {
                     result.add(t);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return result;
     }

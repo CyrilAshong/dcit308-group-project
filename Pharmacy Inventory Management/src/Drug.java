@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.List;
 
+// Represents a drug in the pharmacy system with attributes for tracking inventory
 public class Drug implements Serializable {
     public String name, code, expirationDate;
     public double price;
