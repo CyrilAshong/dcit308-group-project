@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+// Enhanced system with purchase/sales tracking and file-based persistence
 public class PharmacySystem {
     static HashMap<String, Drug> drugMap = new HashMap<>();
     static Queue<Transaction> purchaseHistory = new LinkedList<>();
@@ -10,12 +11,13 @@ public class PharmacySystem {
     static final String SALES_FILE = "sales.dat";
 
     public static void main(String[] args) {
-        loadData();
+        loadData(); // Load saved data
         Scanner sc = new Scanner(System.in);
 
         while (true) {
             System.out.println("\n-- Atinka Meds Pharmacy System --");
-            System.out.println("1. Add Drug\n2. List Drugs\n3. Record Purchase\n4. Record Sale\n5. Search Drug\n6. Sort Drugs\n7. View Purchases\n8. View Sales\n9. Save & Exit");
+            System.out.println(
+                    "1. Add Drug\n2. List Drugs\n3. Record Purchase\n4. Record Sale\n5. Search Drug\n6. Sort Drugs\n7. View Purchases\n8. View Sales\n9. Save & Exit");
             int choice = safeIntInput(sc, "Choose an option: ");
 
             switch (choice) {
@@ -36,6 +38,7 @@ public class PharmacySystem {
         }
     }
 
+    // Validate integer input
     static int safeIntInput(Scanner sc, String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -45,11 +48,12 @@ public class PharmacySystem {
                 return value;
             } else {
                 System.out.println("Invalid input. Please enter a number.");
-                sc.nextLine(); // consume invalid input
+                sc.nextLine(); // clear input
             }
         }
     }
 
+    // Validate double input
     static double safeDoubleInput(Scanner sc, String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -64,6 +68,7 @@ public class PharmacySystem {
         }
     }
 
+    // Add a new drug to inventory
     static void addDrug(Scanner sc) {
         System.out.print("Name: ");
         String name = sc.nextLine();
@@ -79,12 +84,14 @@ public class PharmacySystem {
         System.out.println("Drug added.");
     }
 
+    // Display all drugs
     static void listDrugs() {
         for (Drug d : drugMap.values()) {
             System.out.println(d.code + " | " + d.name + " | Price: " + d.price + " | Stock: " + d.stock);
         }
     }
 
+    // Record a new purchase (incoming stock)
     static void recordPurchase(Scanner sc) {
         System.out.print("Drug Code: ");
         String code = sc.nextLine();
@@ -103,6 +110,7 @@ public class PharmacySystem {
         System.out.println("Purchase recorded.");
     }
 
+    // Record a sale (outgoing stock)
     static void recordSale(Scanner sc) {
         System.out.print("Drug Code: ");
         String code = sc.nextLine();
@@ -125,6 +133,7 @@ public class PharmacySystem {
         System.out.println("Sale recorded.");
     }
 
+    // Search for a drug by name or code
     static void searchDrug(Scanner sc) {
         System.out.print("Enter drug name/code: ");
         String query = sc.nextLine().toLowerCase();
@@ -135,6 +144,7 @@ public class PharmacySystem {
         }
     }
 
+    // Sort and display drugs by name or price
     static void sortDrugs(Scanner sc) {
         List<Drug> list = new ArrayList<>(drugMap.values());
         System.out.println("Sort by: 1) Name 2) Price");
@@ -149,22 +159,25 @@ public class PharmacySystem {
         }
     }
 
+    // View all recorded purchases
     static void viewPurchases() {
         for (Transaction t : purchaseHistory) {
             System.out.println(t.timestamp + " | " + t.drugCode + " | Qty: " + t.quantity + " | Buyer: " + t.buyerId);
         }
     }
 
+    // View all sales records
     static void viewSales() {
         for (Transaction t : salesLog) {
             System.out.println(t.timestamp + " | " + t.drugCode + " | Qty: " + t.quantity + " | Buyer: " + t.buyerId);
         }
     }
 
+    // Save all program data to files
     static void saveData() {
         try (ObjectOutputStream o1 = new ObjectOutputStream(new FileOutputStream(DRUG_FILE));
-             ObjectOutputStream o2 = new ObjectOutputStream(new FileOutputStream(PURCHASE_FILE));
-             ObjectOutputStream o3 = new ObjectOutputStream(new FileOutputStream(SALES_FILE))) {
+                ObjectOutputStream o2 = new ObjectOutputStream(new FileOutputStream(PURCHASE_FILE));
+                ObjectOutputStream o3 = new ObjectOutputStream(new FileOutputStream(SALES_FILE))) {
             o1.writeObject(drugMap);
             o2.writeObject(purchaseHistory);
             o3.writeObject(salesLog);
@@ -174,10 +187,11 @@ public class PharmacySystem {
         }
     }
 
+    // Load saved data from disk into memory
     static void loadData() {
         try (ObjectInputStream o1 = new ObjectInputStream(new FileInputStream(DRUG_FILE));
-             ObjectInputStream o2 = new ObjectInputStream(new FileInputStream(PURCHASE_FILE));
-             ObjectInputStream o3 = new ObjectInputStream(new FileInputStream(SALES_FILE))) {
+                ObjectInputStream o2 = new ObjectInputStream(new FileInputStream(PURCHASE_FILE));
+                ObjectInputStream o3 = new ObjectInputStream(new FileInputStream(SALES_FILE))) {
             drugMap = (HashMap<String, Drug>) o1.readObject();
             purchaseHistory = (Queue<Transaction>) o2.readObject();
             salesLog = (Stack<Transaction>) o3.readObject();

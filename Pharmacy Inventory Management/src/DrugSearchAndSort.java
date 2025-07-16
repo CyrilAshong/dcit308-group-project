@@ -1,11 +1,14 @@
 import java.util.*;
 
+// Utility class for searching and sorting drugs
 public class DrugSearchAndSort {
 
+    // Search for a drug by its code
     public static Drug searchByCode(String code, Map<String, Drug> drugMap) {
         return drugMap.get(code);
     }
 
+    // Search for drugs by a partial or full name match
     public static List<Drug> searchByName(String name, Map<String, Drug> drugMap) {
         List<Drug> result = new ArrayList<>();
         for (Drug d : drugMap.values()) {
@@ -16,6 +19,7 @@ public class DrugSearchAndSort {
         return result;
     }
 
+    // Sort drugs alphabetically by name using insertion sort
     public static void insertionSortByName(List<Drug> list) {
         for (int i = 1; i < list.size(); i++) {
             Drug key = list.get(i);
@@ -28,6 +32,7 @@ public class DrugSearchAndSort {
         }
     }
 
+    // Sort drugs in ascending order by price
     public static void insertionSortByPrice(List<Drug> list) {
         for (int i = 1; i < list.size(); i++) {
             Drug key = list.get(i);

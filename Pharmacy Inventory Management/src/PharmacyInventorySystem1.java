@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+// A basic CLI-based inventory system that stores drug data to a text file
 public class PharmacyInventorySystem1 {
     private static final String FILE_NAME = "drugs.txt";
     private static HashMap<String, Drug1> drugMap = new HashMap<>();
@@ -43,6 +44,7 @@ public class PharmacyInventorySystem1 {
         }
     }
 
+    // Method to add a new drug
     private static void addDrug(Scanner scanner) {
         System.out.print("Enter Drug Name: ");
         String name = scanner.nextLine();
@@ -77,6 +79,7 @@ public class PharmacyInventorySystem1 {
         System.out.println("Drug added successfully.");
     }
 
+    // Method to remove a drug by its code
     private static void removeDrug(Scanner scanner) {
         System.out.print("Enter Drug Code to remove: ");
         String code = scanner.nextLine();
@@ -88,6 +91,7 @@ public class PharmacyInventorySystem1 {
         }
     }
 
+    // Method to update an existing drug
     private static void updateDrug(Scanner scanner) {
         System.out.print("Enter Drug Code to update: ");
         String code = scanner.nextLine();
@@ -122,6 +126,7 @@ public class PharmacyInventorySystem1 {
         System.out.println("Drug updated.");
     }
 
+    // Method to list all stored drugs
     private static void listDrugs() {
         if (drugMap.isEmpty()) {
             System.out.println("No drugs in inventory.");
@@ -133,6 +138,7 @@ public class PharmacyInventorySystem1 {
         }
     }
 
+    // Load drug data from file at startup
     private static void loadFromFile() {
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
@@ -145,6 +151,7 @@ public class PharmacyInventorySystem1 {
         }
     }
 
+    // Save drug data to file for persistence
     private static void saveToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Drug1 drug : drugMap.values()) {
