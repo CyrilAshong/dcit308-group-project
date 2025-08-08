@@ -1,10 +1,9 @@
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Supplier implements Serializable {
-    public String name;
-    public String location;
-    public String id;
+    public String name, location, id;
     public int deliveryTimeDays;
 
     public Supplier(String name, String location, String id, int deliveryTimeDays) {
@@ -14,80 +13,36 @@ public class Supplier implements Serializable {
         this.deliveryTimeDays = deliveryTimeDays;
     }
 
-    @Override
-    public String toString() {
-        return String.format("Supplier{name='%s', location='%s', id='%s', deliveryTimeDays=%d}",
-                name, location, id, deliveryTimeDays);
+    // Filter suppliers by location (case-insensitive partial match)
+    public static List<Supplier> filterByLocation(List<Supplier> suppliers, String location) {
+        if (location == null || location.trim().isEmpty()) {
+            return new ArrayList<>(suppliers);
+        }
+        String searchLocation = location.toLowerCase();
+        return suppliers.stream()
+                .filter(s -> s.location != null && s.location.toLowerCase().contains(searchLocation))
+                .collect(Collectors.toList());
     }
 
-    // Nested static class to manage drugs and their suppliers
-    public static class DrugSupplierManager {
-        private Map<String, List<Supplier>> drugSupplierMap = new HashMap<>();
-
-        // Add a supplier to a drug
-        public void addSupplierToDrug(String drugName, Supplier supplier) {
-            drugSupplierMap
-                .computeIfAbsent(drugName, k -> new ArrayList<>())
-                .add(supplier);
+    // Filter suppliers by maximum delivery time in days
+    public static List<Supplier> filterByDeliveryTime(List<Supplier> suppliers, int maxDeliveryDays) {
+        if (maxDeliveryDays < 0) {
+            return new ArrayList<>();
         }
-
-        // Get all suppliers for a specific drug
-        public List<Supplier> getSuppliersForDrug(String drugName) {
-            return drugSupplierMap.getOrDefault(drugName, new ArrayList<>());
-        }
-
-        // Filter suppliers by location
-        public List<Supplier> filterSuppliersByLocation(String location) {
-            Set<Supplier> result = new HashSet<>();
-            for (List<Supplier> suppliers : drugSupplierMap.values()) {
-                for (Supplier s : suppliers) {
-                    if (s.location.equalsIgnoreCase(location)) {
-                        result.add(s);
-                    }
-                }
-            }
-            return new ArrayList<>(result);
-        }
-
-        // Filter suppliers by delivery time (<= maxDays)
-        public List<Supplier> filterSuppliersByDeliveryTime(int maxDays) {
-            Set<Supplier> result = new HashSet<>();
-            for (List<Supplier> suppliers : drugSupplierMap.values()) {
-                for (Supplier s : suppliers) {
-                    if (s.deliveryTimeDays <= maxDays) {
-                        result.add(s);
-                    }
-                }
-            }
-            return new ArrayList<>(result);
-        }
+        return suppliers.stream()
+                .filter(s -> s.deliveryTimeDays <= maxDeliveryDays)
+                .collect(Collectors.toList());
     }
 
-    // Main method for testing
-    public static void main(String[] args) {
-        DrugSupplierManager manager = new DrugSupplierManager();
-
-        Supplier s1 = new Supplier("PharmaPlus", "Accra", "S001", 2);
-        Supplier s2 = new Supplier("MediLife", "Kumasi", "S002", 5);
-        Supplier s3 = new Supplier("HealthDirect", "Accra", "S003", 3);
-
-        manager.addSupplierToDrug("Paracetamol", s1);
-        manager.addSupplierToDrug("Paracetamol", s2);
-        manager.addSupplierToDrug("Ibuprofen", s3);
-
-        System.out.println("Suppliers for Paracetamol:");
-        for (Supplier s : manager.getSuppliersForDrug("Paracetamol")) {
-            System.out.println(s);
+    // Combined filter for both location and delivery time
+    public static List<Supplier> filterSuppliers(List<Supplier> suppliers, String location, int maxDeliveryDays) {
+        List<Supplier> result = suppliers;
+        if (location != null && !location.trim().isEmpty()) {
+            result = filterByLocation(result, location);
         }
-
-        System.out.println("\nSuppliers in Accra:");
-        for (Supplier s : manager.filterSuppliersByLocation("Accra")) {
-            System.out.println(s);
+        if (maxDeliveryDays >= 0) {
+            result = filterByDeliveryTime(result, maxDeliveryDays);
         }
-
-        System.out.println("\nSuppliers with delivery time <= 3 days:");
-        for (Supplier s : manager.filterSuppliersByDeliveryTime(3)) {
-            System.out.println(s);
-        }
+        return result;
     }
 }
